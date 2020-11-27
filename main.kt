@@ -120,13 +120,53 @@ data class Symbol(val name: String) : Sexpr {
     }
 }
 
+fun eval(sexpr: Sexpr): Sexpr {
+    return if (sexpr is Cons) {
+        when (sexpr.first) {
+            Symbol("+") -> {
+                var result = 0
+                var args = sexpr.second
+                while (args is Cons) {
+                    val x = eval(args.first)
+                    if (x is Symbol) {
+                        result = result + x.name.toInt()
+                    } else {
+                        throw Exception("Expected symbol but got $x")
+                    }
+                    args = args.second
+                }
+                Symbol(result.toString())
+            }
+
+            Symbol("*") -> {
+                var result = 1
+                var args = sexpr.second
+                while (args is Cons) {
+                    val x = eval(args.first)
+                    if (x is Symbol) {
+                        result = result * x.name.toInt()
+                    } else {
+                        throw Exception("Expected symbol but got $x")
+                    }
+                    args = args.second
+                }
+                Symbol(result.toString())
+            }
+
+            else -> {
+                throw Exception("Cannot call ${sexpr.first} as a function")
+            }
+        }
+    } else {
+        sexpr
+    }
+}
+
 fun main(args: Array<String>) {
     if (args.size < 1) {
         println("ERROR: Not enough arguments provided");
         System.exit(1);
     }
 
-    println("Line count: ${parseSexpr(File(args[0]).readText().tokenize()).first}");
+    println("Result: ${eval(parseSexpr(File(args[0]).readText().tokenize()).first)}");
 }
-
-
