@@ -9,10 +9,6 @@ enum class TokenType {
 
 data class Token(val type: TokenType, val text: String)
 
-fun Char.isSpecial(): Boolean {
-    return "().".indexOf(this) >= 0
-}
-
 fun String.tokenize(): List<Token> {
     val s = this
     @OptIn(kotlin.ExperimentalStdlibApi::class)
@@ -24,10 +20,13 @@ fun String.tokenize(): List<Token> {
                 ')' -> Token(TokenType.CloseParen, ")")
                 '.' -> Token(TokenType.Dot, ".")
                 else -> {
-                    fun isSymbol(x: Char): Boolean {
-                        return !x.isSpecial() && !x.isWhitespace()
+                    fun Char.isSpecial(): Boolean {
+                        return "().".indexOf(this) >= 0
                     }
-                    Token(TokenType.Symbol, input.takeWhile({ x -> isSymbol(x) }))
+                    fun Char.isSymbol(): Boolean {
+                        return !this.isSpecial() && !this.isWhitespace()
+                    }
+                    Token(TokenType.Symbol, input.takeWhile({ x -> x.isSymbol() }))
                 }
             }
             add(token)
