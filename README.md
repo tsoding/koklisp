@@ -1,4 +1,4 @@
-# Koklin S-expression
+# Lisp in Kotlin
 
 Just a small playground to try [Kotlin](https://kotlinlang.org/) out
 
